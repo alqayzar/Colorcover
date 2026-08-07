@@ -8,7 +8,6 @@ import {
 } from '@/lib/game-setup'
 import { readGameSetup, writeGameSetup } from '@/lib/game-setup-storage'
 
-
 const DEFAULT_PLAYERS = 6
 const DEFAULT_UNDERCOVERS = 1
 const DEFAULT_MR_WHITES = 1
