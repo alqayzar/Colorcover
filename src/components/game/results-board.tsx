@@ -22,8 +22,14 @@ function ResultsBoard(props: ResultsBoardProps) {
         {players.map((player) => (
           <div
             key={player.id}
-            className="flex flex-col items-center gap-2 rounded-3xl border-4 border-game-ink bg-white px-4 py-4 text-center"
+            className="relative flex flex-col items-center gap-2 rounded-3xl border-4 border-game-ink bg-white px-4 py-4 text-center"
           >
+            <span
+              aria-hidden="true"
+              className="absolute -top-2 -left-2 flex size-7 items-center justify-center rounded-full border-4 border-game-ink bg-white text-xs text-game-ink"
+            >
+              {player.turnOrder}
+            </span>
             <div className="relative">
               <span
                 aria-hidden="true"

@@ -19,6 +19,7 @@ interface SessionPlayer {
   role: PlayerRole
   color: string | null
   eliminated: boolean
+  turnOrder: number
 }
 
 type GameOutcome =
@@ -40,6 +41,21 @@ function pickRandom<T>(items: readonly T[]): T {
   return items[Math.floor(Math.random() * items.length)]
 }
 
+function assignTurnOrder(roles: readonly PlayerRole[], allowMrWhiteFirst: boolean): number[] {
+  const orders = shuffle(Array.from({ length: roles.length }, (_, index) => index + 1))
+  if (allowMrWhiteFirst) return orders
+
+  const firstIndex = orders.indexOf(1)
+  if (roles[firstIndex] !== 'mrwhite') return orders
+
+  const swapIndex = roles.findIndex((role) => role !== 'mrwhite')
+  if (swapIndex === -1) return orders
+
+  const swapped = [...orders]
+  ;[swapped[firstIndex], swapped[swapIndex]] = [swapped[swapIndex], swapped[firstIndex]]
+  return swapped
+}
+
 interface CreateGameSessionParams {
   players: number
   undercovers: number
@@ -47,6 +63,7 @@ interface CreateGameSessionParams {
   enabledColorHexes: readonly string[]
   enabledSpecialRoleIds?: readonly SpecialRoleId[]
   previousNames?: readonly string[]
+  allowMrWhiteFirst?: boolean
 }
 
 function createGameSession(params: CreateGameSessionParams): GameSession {
@@ -57,6 +74,7 @@ function createGameSession(params: CreateGameSessionParams): GameSession {
     enabledColorHexes,
     enabledSpecialRoleIds = [],
     previousNames,
+    allowMrWhiteFirst = false,
   } = params
   const baseInnocents = Math.max(0, players - undercovers - mrWhites)
   const includeFou = enabledSpecialRoleIds.includes('fou') && baseInnocents > 0
@@ -75,6 +93,8 @@ function createGameSession(params: CreateGameSessionParams): GameSession {
   const undercoverColor =
     undercovers > 0 ? pickRandom(otherColors.length > 0 ? otherColors : enabledColorHexes) : null
 
+  const turnOrders = assignTurnOrder(shuffledRoles, allowMrWhiteFirst)
+
   const sessionPlayers: SessionPlayer[] = shuffledRoles.map((role, index) => ({
     id: crypto.randomUUID(),
     name: previousNames?.[index] ?? '',
@@ -86,6 +106,7 @@ function createGameSession(params: CreateGameSessionParams): GameSession {
           ? undercoverColor
           : null,
     eliminated: false,
+    turnOrder: turnOrders[index],
   }))
 
   return {

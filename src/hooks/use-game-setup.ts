@@ -11,11 +11,13 @@ import { readGameSetup, writeGameSetup } from '@/lib/game-setup-storage'
 const DEFAULT_PLAYERS = 6
 const DEFAULT_UNDERCOVERS = 1
 const DEFAULT_MR_WHITES = 1
+const DEFAULT_ALLOW_MR_WHITE_FIRST = false
 
 interface GameSetupState {
   players: number
   undercovers: number
   mrWhites: number
+  allowMrWhiteFirst: boolean
 }
 
 function loadInitialState(): GameSetupState {
@@ -26,7 +28,11 @@ function loadInitialState(): GameSetupState {
     stored?.undercovers ?? DEFAULT_UNDERCOVERS,
     stored?.mrWhites ?? DEFAULT_MR_WHITES
   )
-  return { players, ...clamped }
+  return {
+    players,
+    ...clamped,
+    allowMrWhiteFirst: stored?.allowMrWhiteFirst ?? DEFAULT_ALLOW_MR_WHITE_FIRST,
+  }
 }
 
 function useGameSetup() {
@@ -41,7 +47,7 @@ function useGameSetup() {
   function setPlayers(next: number) {
     const players = Math.min(MAX_PLAYERS, Math.max(MIN_PLAYERS, next))
     const clamped = clampSpecialCounts(players, state.undercovers, state.mrWhites)
-    setState({ players, ...clamped })
+    setState((prev) => ({ ...prev, players, ...clamped }))
   }
 
   function setUndercovers(next: number) {
@@ -54,16 +60,22 @@ function useGameSetup() {
     setState((prev) => ({ ...prev, mrWhites: Math.min(max, Math.max(0, next)) }))
   }
 
+  function setAllowMrWhiteFirst(next: boolean) {
+    setState((prev) => ({ ...prev, allowMrWhiteFirst: next }))
+  }
+
   return {
     players: state.players,
     undercovers: state.undercovers,
     mrWhites: state.mrWhites,
+    allowMrWhiteFirst: state.allowMrWhiteFirst,
     maxSpecial,
     minPlayers: MIN_PLAYERS,
     maxPlayers: MAX_PLAYERS,
     setPlayers,
     setUndercovers,
     setMrWhites,
+    setAllowMrWhiteFirst,
     canIncrementPlayers: state.players < MAX_PLAYERS,
     canDecrementPlayers: state.players > MIN_PLAYERS,
     canIncrementUndercovers: state.undercovers + state.mrWhites < maxSpecial,

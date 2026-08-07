@@ -4,6 +4,7 @@ interface StoredGameSetup {
   players: number
   undercovers: number
   mrWhites: number
+  allowMrWhiteFirst?: boolean
 }
 
 function readGameSetup(): StoredGameSetup | null {
@@ -14,7 +15,8 @@ function readGameSetup(): StoredGameSetup | null {
     if (
       typeof parsed?.players !== 'number' ||
       typeof parsed?.undercovers !== 'number' ||
-      typeof parsed?.mrWhites !== 'number'
+      typeof parsed?.mrWhites !== 'number' ||
+      (parsed?.allowMrWhiteFirst !== undefined && typeof parsed.allowMrWhiteFirst !== 'boolean')
     ) {
       return null
     }

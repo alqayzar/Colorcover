@@ -41,6 +41,7 @@ function GameScreen() {
         enabledColorHexes: enabledColors.map((color) => color.hex),
         enabledSpecialRoleIds,
         previousNames,
+        allowMrWhiteFirst: setup.allowMrWhiteFirst,
       })
     )
   }

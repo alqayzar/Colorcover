@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { Palette, VenetianMask } from 'lucide-react'
+import { Check, Palette, VenetianMask } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 
 import { CartoonButton } from '@/components/home/cartoon-button'
@@ -12,6 +12,7 @@ import { useGameSetup } from '@/hooks/use-game-setup'
 import { useSpecialRoles } from '@/hooks/use-special-roles'
 import { createGameSession, fillDebugNames } from '@/lib/game-session'
 import { writeGameSession } from '@/lib/game-session-storage'
+import { cn } from '@/lib/utils'
 
 const LONG_PRESS_MS = 600
 
@@ -33,6 +34,7 @@ function MainMenu() {
       mrWhites: setup.mrWhites,
       enabledColorHexes,
       enabledSpecialRoleIds,
+      allowMrWhiteFirst: setup.allowMrWhiteFirst,
     })
   }
 
@@ -99,6 +101,27 @@ function MainMenu() {
           canIncrement={setup.canIncrementMrWhites}
           canDecrement={setup.canDecrementMrWhites}
         />
+
+        <button
+          type="button"
+          onClick={() => setup.setAllowMrWhiteFirst(!setup.allowMrWhiteFirst)}
+          className={cn(
+            'flex w-full items-center gap-3 rounded-full border-4 border-game-ink bg-white px-4 py-3 text-left transition-opacity',
+            !setup.allowMrWhiteFirst && 'opacity-50'
+          )}
+        >
+          <span className="flex-1 text-sm font-black tracking-wide text-game-ink uppercase">
+            👻 Mr White peut être premier
+          </span>
+          <span
+            className={cn(
+              'flex size-8 shrink-0 items-center justify-center rounded-full border-4 border-game-ink',
+              setup.allowMrWhiteFirst ? 'bg-game-green text-white' : 'bg-white text-transparent'
+            )}
+          >
+            <Check className="size-4" strokeWidth={4} />
+          </span>
+        </button>
 
         <CartoonButton tone="purple" onClick={() => setIsRolesDialogOpen(true)}>
           <VenetianMask className="size-5" strokeWidth={3} />

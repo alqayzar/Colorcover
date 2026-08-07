@@ -67,6 +67,12 @@ function PlayerBoard(props: PlayerBoardProps) {
               player.eliminated && 'opacity-60'
             )}
           >
+            <span
+              aria-hidden="true"
+              className="absolute -top-2 -left-2 flex size-7 items-center justify-center rounded-full border-4 border-game-ink bg-white text-xs text-game-ink"
+            >
+              {player.turnOrder}
+            </span>
             {!player.eliminated && mode === 'eliminate' && (
               <span
                 aria-hidden="true"
