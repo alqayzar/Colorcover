@@ -71,10 +71,10 @@ function MainMenu() {
   }
 
   return (
-    <main className="bg-grid flex min-h-svh flex-col items-center justify-center gap-10 bg-white p-6">
+    <main className="bg-grid flex min-h-svh flex-col items-center justify-center gap-6 bg-white p-4">
       <Logo />
 
-      <div className="flex w-full max-w-xs flex-col items-center gap-8">
+      <div className="flex w-full max-w-xs flex-col items-center gap-5">
         <CounterField
           label="🎨 Joueurs"
           tone="blue"
