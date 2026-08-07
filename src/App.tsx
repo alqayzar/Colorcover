@@ -5,7 +5,7 @@ import { MainMenu } from '@/components/home/main-menu'
 
 function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename={import.meta.env.BASE_URL}>
       <Routes>
         <Route path="/" element={<MainMenu />} />
         <Route path="/game" element={<GameScreen />} />

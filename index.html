@@ -8,6 +8,24 @@
   </head>
   <body>
     <div id="root"></div>
+    <script type="text/javascript">
+      // Single Page Apps for GitHub Pages
+      // https://github.com/rafgraph/spa-github-pages
+      // Reverses the encoding done in public/404.html before React Router
+      // reads the URL, so a reload on a deep route lands on the right page.
+      (function (l) {
+        if (l.search[1] === '/') {
+          var decoded = l.search
+            .slice(1)
+            .split('&')
+            .map(function (s) {
+              return s.replace(/~and~/g, '&')
+            })
+            .join('?')
+          window.history.replaceState(null, null, l.pathname.slice(0, -1) + decoded + l.hash)
+        }
+      })(window.location)
+    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
