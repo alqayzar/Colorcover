@@ -1,17 +1,22 @@
+import { Repeat } from 'lucide-react'
+
 import { CartoonButton } from '@/components/home/cartoon-button'
-import { ROLE_LABELS, type SessionPlayer } from '@/lib/game-session'
+import { getWinnerIds, ROLE_LABELS, type GameOutcome, type SessionPlayer } from '@/lib/game-session'
 
 interface ResultsBoardProps {
   players: SessionPlayer[]
+  outcome?: GameOutcome
+  onReplay: () => void
   onQuit: () => void
 }
 
 function ResultsBoard(props: ResultsBoardProps) {
-  const { players, onQuit } = props
+  const { players, outcome, onReplay, onQuit } = props
+  const winnerIds = getWinnerIds(outcome, players)
 
   return (
     <div className="flex w-full max-w-sm flex-col items-center gap-6">
-      <h2 className="text-center text-2xl font-black text-game-ink">Résultats</h2>
+      <h2 className="text-center text-2xl font-black text-game-ink">{outcome?.reason ?? 'Résultats'}</h2>
 
       <div className="grid w-full max-h-[60vh] grid-cols-2 gap-4 overflow-y-auto overscroll-contain p-1">
         {players.map((player) => (
@@ -34,6 +39,14 @@ function ResultsBoard(props: ResultsBoardProps) {
                   ?
                 </div>
               )}
+              {winnerIds.has(player.id) && (
+                <span
+                  aria-hidden="true"
+                  className="absolute -top-6 -right-5 rotate-30 text-4xl"
+                >
+                  👑
+                </span>
+              )}
             </div>
             <span className="truncate text-base font-black text-game-ink">{player.name}</span>
             <span className="text-xs font-black tracking-wide text-game-ink/60 uppercase">
@@ -43,6 +56,10 @@ function ResultsBoard(props: ResultsBoardProps) {
         ))}
       </div>
 
+      <CartoonButton tone="green" onClick={onReplay}>
+        <Repeat className="size-5" strokeWidth={3} />
+        Rejouer
+      </CartoonButton>
       <CartoonButton tone="red" onClick={onQuit}>
         Quitter
       </CartoonButton>

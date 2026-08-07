@@ -1,6 +1,6 @@
 import * as React from 'react'
 
-import type { GameSession } from '@/lib/game-session'
+import type { GameOutcome, GameSession } from '@/lib/game-session'
 import { clearGameSession, readGameSession, writeGameSession } from '@/lib/game-session-storage'
 
 function useGameSession() {
@@ -44,8 +44,8 @@ function useGameSession() {
     })
   }
 
-  function finishGame() {
-    setSession((prev) => (prev ? { ...prev, phase: 'finished' } : prev))
+  function finishGame(outcome: GameOutcome) {
+    setSession((prev) => (prev ? { ...prev, phase: 'finished', outcome } : prev))
   }
 
   function quitGame() {
@@ -53,7 +53,20 @@ function useGameSession() {
     setSession(null)
   }
 
-  return { session, currentPlayer, submitName, acknowledgeRole, eliminatePlayer, finishGame, quitGame }
+  function startSession(newSession: GameSession) {
+    setSession(newSession)
+  }
+
+  return {
+    session,
+    currentPlayer,
+    submitName,
+    acknowledgeRole,
+    eliminatePlayer,
+    finishGame,
+    quitGame,
+    startSession,
+  }
 }
 
 export { useGameSession }

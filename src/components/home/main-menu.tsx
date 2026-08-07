@@ -1,13 +1,15 @@
 import * as React from 'react'
-import { Palette } from 'lucide-react'
+import { Palette, VenetianMask } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 
 import { CartoonButton } from '@/components/home/cartoon-button'
 import { ColorPickerDialog } from '@/components/home/color-picker-dialog'
 import { CounterField } from '@/components/home/counter-field'
 import { Logo } from '@/components/home/logo'
+import { RolesDialog } from '@/components/home/roles-dialog'
 import { useColorPalette } from '@/hooks/use-color-palette'
 import { useGameSetup } from '@/hooks/use-game-setup'
+import { useSpecialRoles } from '@/hooks/use-special-roles'
 import { createGameSession, fillDebugNames } from '@/lib/game-session'
 import { writeGameSession } from '@/lib/game-session-storage'
 
@@ -17,7 +19,9 @@ function MainMenu() {
   const navigate = useNavigate()
   const setup = useGameSetup()
   const { colors } = useColorPalette()
+  const { enabledIds: enabledSpecialRoleIds } = useSpecialRoles()
   const [isColorDialogOpen, setIsColorDialogOpen] = React.useState(false)
+  const [isRolesDialogOpen, setIsRolesDialogOpen] = React.useState(false)
   const longPressTimer = React.useRef<number | null>(null)
   const longPressTriggered = React.useRef(false)
 
@@ -28,6 +32,7 @@ function MainMenu() {
       undercovers: setup.undercovers,
       mrWhites: setup.mrWhites,
       enabledColorHexes,
+      enabledSpecialRoleIds,
     })
   }
 
@@ -71,7 +76,7 @@ function MainMenu() {
 
       <div className="flex w-full max-w-xs flex-col items-center gap-8">
         <CounterField
-          label="Joueurs"
+          label="🎨 Joueurs"
           tone="blue"
           value={setup.players}
           onChange={setup.setPlayers}
@@ -79,7 +84,7 @@ function MainMenu() {
           canDecrement={setup.canDecrementPlayers}
         />
         <CounterField
-          label="Undercover"
+          label="🕵️ Undercover"
           tone="purple"
           value={setup.undercovers}
           onChange={setup.setUndercovers}
@@ -87,13 +92,18 @@ function MainMenu() {
           canDecrement={setup.canDecrementUndercovers}
         />
         <CounterField
-          label="Mr. White"
+          label="👻 Mr. White"
           tone="ink"
           value={setup.mrWhites}
           onChange={setup.setMrWhites}
           canIncrement={setup.canIncrementMrWhites}
           canDecrement={setup.canDecrementMrWhites}
         />
+
+        <CartoonButton tone="purple" onClick={() => setIsRolesDialogOpen(true)}>
+          <VenetianMask className="size-5" strokeWidth={3} />
+          Rôles
+        </CartoonButton>
 
         <CartoonButton tone="yellow" onClick={() => setIsColorDialogOpen(true)}>
           <Palette className="size-5" strokeWidth={3} />
@@ -114,6 +124,7 @@ function MainMenu() {
         </CartoonButton>
       </div>
 
+      <RolesDialog open={isRolesDialogOpen} onOpenChange={setIsRolesDialogOpen} />
       <ColorPickerDialog open={isColorDialogOpen} onOpenChange={setIsColorDialogOpen} />
     </main>
   )

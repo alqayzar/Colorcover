@@ -6,7 +6,7 @@ import { MrWhiteGuessDialog } from '@/components/game/mr-white-guess-dialog'
 import { ViewRoleDialog } from '@/components/game/view-role-dialog'
 import { CartoonButton } from '@/components/home/cartoon-button'
 import type { GameColorEntry } from '@/lib/colors'
-import { getInnocentColor, ROLE_LABELS, type SessionPlayer } from '@/lib/game-session'
+import { getInnocentColor, ROLE_LABELS, type GameOutcome, type SessionPlayer } from '@/lib/game-session'
 import { cn } from '@/lib/utils'
 
 type SelectionMode = 'idle' | 'eliminate' | 'view-role'
@@ -15,7 +15,7 @@ interface PlayerBoardProps {
   players: SessionPlayer[]
   colors: readonly GameColorEntry[]
   onEliminate: (id: string) => void
-  onFinish: () => void
+  onFinish: (outcome: GameOutcome) => void
 }
 
 function PlayerBoard(props: PlayerBoardProps) {
@@ -42,11 +42,14 @@ function PlayerBoard(props: PlayerBoardProps) {
 
   function handleConfirmEliminate(id: string) {
     const eliminatedPlayer = pendingEliminatePlayer
+    const isFirstElimination = players.every((player) => !player.eliminated)
     onEliminate(id)
     setPendingEliminateId(null)
     setMode('idle')
     if (eliminatedPlayer?.role === 'mrwhite') {
       setMrWhiteGuessId(eliminatedPlayer.id)
+    } else if (eliminatedPlayer?.role === 'fou' && isFirstElimination) {
+      onFinish({ reason: '🤡 Le Fou a gagné !', winner: 'fou', playerId: eliminatedPlayer.id })
     }
   }
 
@@ -100,7 +103,10 @@ function PlayerBoard(props: PlayerBoardProps) {
         <CartoonButton tone="blue" onClick={() => toggleMode('view-role')}>
           Voir rôle
         </CartoonButton>
-        <CartoonButton tone="red" onClick={onFinish}>
+        <CartoonButton
+          tone="red"
+          onClick={() => onFinish({ reason: 'Manche terminée', winner: 'none' })}
+        >
           Quitter
         </CartoonButton>
       </div>
@@ -129,8 +135,14 @@ function PlayerBoard(props: PlayerBoardProps) {
           if (!open) setMrWhiteGuessId(null)
         }}
         onCorrectGuess={() => {
+          if (mrWhiteGuessPlayer) {
+            onFinish({
+              reason: '👻 Mr White a deviné juste !',
+              winner: 'mrwhite',
+              playerId: mrWhiteGuessPlayer.id,
+            })
+          }
           setMrWhiteGuessId(null)
-          onFinish()
         }}
       />
     </div>

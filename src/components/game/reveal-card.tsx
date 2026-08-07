@@ -1,5 +1,6 @@
 import * as React from 'react'
 
+import { RoleReveal } from '@/components/game/role-reveal'
 import { CartoonButton } from '@/components/home/cartoon-button'
 import type { RevealStep, SessionPlayer } from '@/lib/game-session'
 
@@ -15,7 +16,7 @@ interface RevealCardProps {
 
 function RevealCard(props: RevealCardProps) {
   const { player, index, total, step, onSubmitName, onAcknowledge, onCancel } = props
-  const [name, setName] = React.useState('')
+  const [name, setName] = React.useState(player.name)
 
   function handleSubmit() {
     if (!name.trim()) return
@@ -54,22 +55,7 @@ function RevealCard(props: RevealCardProps) {
         <div className="mt-4 flex flex-col items-center gap-6">
           <h2 className="text-center text-2xl font-black text-game-ink">{player.name}</h2>
 
-          {player.color ? (
-            <div className="relative">
-              <span
-                aria-hidden="true"
-                className="absolute inset-0 rounded-full bg-game-ink translate-x-1.5 translate-y-1.5"
-              />
-              <div
-                className="relative size-36 rounded-full border-8 border-game-ink"
-                style={{ backgroundColor: player.color }}
-              />
-            </div>
-          ) : (
-            <p className="comic-title font-logo px-2 text-center text-3xl font-bold text-white">
-              Vous êtes Mr White
-            </p>
-          )}
+          <RoleReveal player={player} />
 
           <CartoonButton tone="green" onClick={onAcknowledge}>
             Ok
